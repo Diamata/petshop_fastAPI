@@ -11,16 +11,17 @@ from alembic import context
 sys.path.insert(0, dirname(dirname(dirname((abspath(__file__))))))
 
 from src.core.config import get_settings
-from src.core.models.base import Base
-# from src.products.models import Product
+
+from src.repository.models import Base
+from src.products.models import Product
+from src.categories.models import Category
+from src.brands.models import Brand
+from src.characteristics.models import Characteristic
+from src.images.models import Image
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-
-SETTINGS = get_settings()
-
-config.set_main_option("sqlalchemy.url", f"{SETTINGS.database_url}?async_fallback=True")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -32,6 +33,10 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
+
+SETTINGS = get_settings()
+
+config.set_main_option("sqlalchemy.url", f"{SETTINGS.database_url}?async_fallback=True")
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
