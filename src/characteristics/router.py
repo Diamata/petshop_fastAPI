@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status
 
 from src.characteristics.schemas import CharacteristicSchema
+from src.core.schemas.enum_characteristics_of_product import CharacteristicsOfProduct
 
 router = APIRouter(prefix="/characteristics", tags=["Characteristics"])
 
@@ -10,18 +11,18 @@ async def get_all_characteristics() -> list[CharacteristicSchema]:
     pass
 
 
-@router.get("/{characteristic_type}")
-async def get_characteristic_by_name(characteristic_type: str) -> list[CharacteristicSchema]:
+@router.get("/{characteristics_type}")
+async def get_characteristics_by_type(characteristic_type: str) -> list[CharacteristicSchema]:
     pass
 
 
-@router.get("/{characteristics_id}")
-async def get_characteristic_by_id(characteristics_id: int) -> CharacteristicSchema:
+@router.get("/{characteristic_id}")
+async def get_characteristic_by_id(characteristic_id: int) -> CharacteristicSchema:
     pass
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def create_characteristic(name: str, value_type: str) -> CharacteristicSchema:
+async def create_characteristic(name: CharacteristicsOfProduct, value_type: str) -> CharacteristicSchema:
     pass
 
 
