@@ -6,7 +6,7 @@ from src.core.schemas.enum_characteristics_of_product import CharacteristicsOfPr
 class CharacteristicSchema(BaseModel):
     id: int
     name: CharacteristicsOfProduct
-    value_type: [str | None]
+    value_type: str | None
 
     class Config:
         from_attributes = True

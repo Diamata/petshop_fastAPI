@@ -6,7 +6,7 @@ class CategorySchema(BaseModel):
     name: str
     level: int
     is_active: bool
-    parent_id: [int | None]
+    parent_id: int | None
 
     class Config:
         from_attributes = True
