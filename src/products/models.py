@@ -14,8 +14,19 @@ class Product(Base):
     description: Mapped[str | None]
     is_active: Mapped[bool]
 
+    age: Mapped[str | None]
+    main_ingredient: Mapped[str | None]
+    special_prescription: Mapped[str | None]
+    country_of_origin: Mapped[str | None]
+    packed_in: Mapped[str | None]
+    qty_in_package: Mapped[str | None]
+    weight: Mapped[str | None]
+    length: Mapped[str | None]
+    width: Mapped[str | None]
+    height: Mapped[str | None]
+
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    image_id: Mapped[int] = mapped_column(ForeignKey("images.id"))
+    image_id: Mapped[int | None] = mapped_column(ForeignKey("images.id"))
     brand_id: Mapped[id] = mapped_column(ForeignKey("brands.id"))
-    characteristics_id: Mapped[list[str | None]] = mapped_column(ForeignKey("characteristics.id"))
+
 

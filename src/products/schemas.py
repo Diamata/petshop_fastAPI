@@ -9,6 +9,17 @@ class ProductSchema(BaseModel):
     description: str
     is_active: bool
 
+    age: str | None
+    main_ingredient: str | None
+    special_prescription: str | None
+    country_of_origin: str | None
+    packed_in: str | None
+    qty_in_package: int | None
+    weight: str | None
+    length: str | None
+    width: str | None
+    height: str | None
+
     category_id: list[int]
     image_id: int
     brand: str | None

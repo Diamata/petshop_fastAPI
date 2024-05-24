@@ -39,15 +39,24 @@ async def get_products_by_category(category: str) -> list[ProductSchema]:
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_product(
-    is_active: bool,
-    name: str = None,
-    price: int = None,
-    discount_ratio: int = None,
-    description: str = None,
-    category: str = None,
-    image_id: int = None,
-    brand: str = None,
-    characteristics: list[str | None] = None
+        is_active: bool,
+        name: str = None,
+        price: int = None,
+        discount_ratio: int = None,
+        description: str = None,
+        category: str = None,
+        image_id: int = None,
+        brand: str = None,
+        age: str = None,
+        main_ingredient: str = None,
+        special_prescription: str = None,
+        country_of_origin: str = None,
+        packed_in: str = None,
+        qty_in_package: int = None,
+        weight: str = None,
+        length: str = None,
+        width: str = None,
+        height: str = None
 ) -> ProductSchema:
     pass
 
@@ -61,3 +70,5 @@ async def update_product(product_id: int) -> ProductSchema:
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(product_id: int) -> None:
     pass
+
+# TODO: логика для фильтрации
