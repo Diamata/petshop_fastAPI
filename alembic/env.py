@@ -16,7 +16,6 @@ from src.repository.models import Base
 from src.products.models import Product
 from src.categories.models import Category
 from src.brands.models import Brand
-from src.characteristics.models import Characteristic
 from src.images.models import Image
 
 # this is the Alembic Config object, which provides
