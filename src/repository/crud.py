@@ -1,5 +1,6 @@
+from sqlalchemy import select
+
 from src.repository.db_connection import async_session_maker
-from sqlalchemy import select, insert, delete
 
 
 class BaseRepo:
@@ -7,7 +8,11 @@ class BaseRepo:
 
     @classmethod
     async def find_all(cls, **filter_by):
-        pass
+        async with async_session_maker() as session:
+            stmt = select(cls.model).filter_by(**filter_by)
+            response = await session.execute(stmt)
+            result = response.scalars().all()
+            return result
 
     @classmethod
     async def find_by_id(cls, model_id: int):

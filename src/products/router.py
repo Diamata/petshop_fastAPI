@@ -1,13 +1,18 @@
 from fastapi import APIRouter, status
 
+from src.products.crud import ProductsRepo
 from src.products.schemas import ProductSchema
+from src.services.exceptions import NoProductsExistsException
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
 @router.get("")
 async def get_all_products() -> list[ProductSchema]:
-    pass
+    products = await ProductsRepo.find_all()
+    if not products:
+        raise NoProductsExistsException
+    return products
 
 
 @router.post("/{product_id}")

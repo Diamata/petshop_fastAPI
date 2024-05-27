@@ -14,16 +14,15 @@ class ProductSchema(BaseModel):
     special_prescription: str | None
     country_of_origin: str | None
     packed_in: str | None
-    qty_in_package: int | None
+    qty_in_package: str | None
     weight: str | None
     length: str | None
     width: str | None
     height: str | None
 
-    category_id: list[int]
+    category_id: int
     image_id: int
     brand: str | None
-    characteristics: list[str | None]
 
     class Config:
         from_attributes = True

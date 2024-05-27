@@ -1,5 +1,7 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped
+
+from src.repository.models import Base
+from sqlalchemy.orm import Mapped
 
 from src.repository.models import Base
 
@@ -9,4 +11,3 @@ class Brand(Base):
 
     name: Mapped[str]
     description: Mapped[str | None]
-
