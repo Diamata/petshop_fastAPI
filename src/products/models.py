@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.repository.models import Base
+
+if TYPE_CHECKING:
+    from src.brands.models import Brand
 
 
 class Product(Base):
@@ -27,3 +32,5 @@ class Product(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
     image_id: Mapped[int | None] = mapped_column(ForeignKey("images.id"))
     brand_id: Mapped[id] = mapped_column(ForeignKey("brands.id"))
+
+    brand: Mapped["Brand"] = relationship(back_populates="product")

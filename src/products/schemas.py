@@ -1,12 +1,14 @@
 from pydantic import BaseModel
 
+from src.brands.schemas import BrandSchema
+
 
 class ProductSchema(BaseModel):
     id: int
     name: str
     price: int
     discount_ratio: int
-    description: str
+    description: str | None
     is_active: bool
 
     age: str | None
@@ -21,8 +23,9 @@ class ProductSchema(BaseModel):
     height: str | None
 
     category_id: int
-    image_id: int
-    brand: str | None
+    image_id: int | None
+    brand_id: int
+    brand: BrandSchema | None
 
     class Config:
         from_attributes = True
