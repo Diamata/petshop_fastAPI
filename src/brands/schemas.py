@@ -1,10 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
-class BrandSchema(BaseModel):
-    id: int
+class BrandSchemaBase(BaseModel):
     name: str
     description: str | None
 
-    class Config:
-        from_attributes = True
+
+class BrandSchemaUpdate(BrandSchemaBase):
+    name: str | None = None
+    description: str | None = None
+
+
+class BrandSchema(BrandSchemaBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
