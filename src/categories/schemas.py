@@ -1,12 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
-class CategorySchema(BaseModel):
-    id: int
+class CategorySchemaBase(BaseModel):
     name: str
-    level: int
     is_active: bool
     parent_id: int | None
 
-    class Config:
-        from_attributes = True
+
+class CategorySchemaUpdate(CategorySchemaBase):
+    name: str | None = None
+    is_active: bool | None = None
+    parent_id: int | None = None
+
+
+class CategoriesWithChildrenSchema(CategorySchemaBase):
+    model_config = ConfigDict(from_attributes=True)
+    children: list['CategorySchema'] = []
+    id: int
+
+
+class CategorySchema(CategorySchemaBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int

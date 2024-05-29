@@ -1,55 +1,82 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 
-from src.categories.schemas import CategorySchema
+from src.categories.crud import CategoriesRepo
+from src.categories.dependencies import get_category_by_id
+from src.categories.schemas import CategorySchema, CategoriesWithChildrenSchema
+from src.core.schemas.enum_pet_categories import PetsEnum
+from src.services.exceptions import NoCategoriesException
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
-# Get all existing categories
-@router.get("")
+@router.get("/all_categories")
 async def get_all_categories() -> list[CategorySchema]:
-    pass
+    """
+    Get all existing categories
+    """
+    categories = await CategoriesRepo.find_all()
+    if not categories:
+        raise NoCategoriesException
+    return categories
 
 
-# Get top parent categories with their parent == None or level == 0       ????????????????
-@router.get("")
+@router.get("/pets")
 async def get_all_top_categories() -> list[CategorySchema]:
-    pass
+    """
+    Get top parent categories with their parent == None
+    """
+    categories = await CategoriesRepo.find_top_categories()
+    if not categories:
+        raise NoCategoriesException
+    return categories
 
 
-@router.get("/{parent_id}")
-async def get_categories_by_parent(parent_id: int) -> list[CategorySchema]:
-    pass
+@router.get("/{pet}")
+async def get_hierarchy_list_of_category(pet: PetsEnum) -> dict:
+    """
+    Get one pet category with its hierarchy
+    """
+    categories = await CategoriesRepo.find_category_hierarchy(pet)
+    if not categories:
+        raise NoCategoriesException
+    return categories
 
 
-@router.get("/{level}")
-async def get_categories_by_level(level: int) -> list[CategorySchema]:
-    pass
+@router.get("")
+async def get_hierarchy_list_of_all_categories() -> list[dict[str, list[CategoriesWithChildrenSchema]]]:
+    """
+    Get all pet categories with their full hierarchies
+    """
+    categories = await CategoriesRepo.find_category_hierarchy_full()
+    if not categories:
+        raise NoCategoriesException
+    return categories
 
 
-@router.post("/{category_is_active}")
-async def get_category_by_is_active(is_active: bool) -> list[CategorySchema | None]:
-    if not is_active:
-        pass
-    pass
+# @router.post("/{category_is_active}")
+# async def get_category_by_is_active(is_active: bool) -> list[CategorySchema | None]:
+#     category = await CategoriesRepo.find_all(is_active=is_active)
+#     if not category:
+#         raise NoCategoriesException
+#     return category
+#
+#
+# @router.post("", status_code=status.HTTP_201_CREATED)
+# async def create_category(
+#         is_active: bool = None,
+#         name: str = None,
+#         parent_id: int = None
+# ) -> CategorySchema:
+#     pass
+#
+#
+# @router.post("/{category_id}", status_code=status.HTTP_200_OK)
+# async def update_category(category_id: int) -> CategorySchema:
+#     pass
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
-async def create_category(
-        is_active: bool,
-        level: int,
-        name: str = None,
-        parent_id: int = None
-) -> CategorySchema:
-    pass
-
-
-# TODO: put & patch with dependency from what is required:
-@router.post("/{category_id}", status_code=status.HTTP_200_OK)
-async def update_category(category_id: int) -> CategorySchema:
-    pass
-
-
-@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_category(category_id: int) -> None:
-    pass
+# TODO: удаление должно идти каскадом от родителя к последнему потомку
+# @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+# async def delete_category(category: CategorySchema = Depends(get_category_by_id)) -> None:
+#     result = await CategoriesRepo.delete_by_id(category.id)
+#     return result

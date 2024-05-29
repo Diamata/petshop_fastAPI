@@ -9,7 +9,7 @@ class PetshopException(HTTPException):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
 
-# ----------------------------------------- Product exceptions
+# ----------------------------------------- Product exceptions:
 
 class NoProductsExistException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
@@ -21,7 +21,7 @@ class NoProductExistsException(PetshopException):
     detail = "There is no such product"
 
 
-# ----------------------------------------- Brand exceptions
+# ----------------------------------------- Brand exceptions:
 
 class NoBrandsException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
@@ -36,3 +36,20 @@ class NoBrandException(PetshopException):
 class NoBrandCreatedException(PetshopException):
     status_code = status.HTTP_409_CONFLICT
     detail = "Brand was not created"
+
+
+# ----------------------------------------- Brand exceptions:
+
+class NoCategoriesException(PetshopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There are no categories under such requirements"
+
+
+class NoCategoryException(PetshopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There is no such category"
+
+
+class NoCategoryCreatedException(PetshopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Category was not created"
