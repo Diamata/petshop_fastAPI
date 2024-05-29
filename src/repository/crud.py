@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, insert
 
 from src.repository.db_connection import async_session_maker
 
@@ -39,4 +39,8 @@ class BaseRepo:
 
     @classmethod
     async def create_new(cls, **data):
-        pass
+        async with async_session_maker() as session:
+            query = insert(cls.model).values(**data)
+            await session.execute(query)
+            await session.commit()
+

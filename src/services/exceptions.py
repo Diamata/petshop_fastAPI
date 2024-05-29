@@ -31,3 +31,8 @@ class NoBrandsException(PetshopException):
 class NoBrandException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There is no such brand"
+
+
+class NoBrandCreatedException(PetshopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Brand was not created"

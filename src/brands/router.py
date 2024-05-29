@@ -3,7 +3,7 @@ from fastapi import APIRouter, status, Depends
 from src.brands.crud import BrandsRepo
 from src.brands.dependencies import get_brand_by_id
 from src.brands.schemas import BrandSchema, BrandSchemaUpdate
-from src.services.exceptions import NoBrandsException, NoBrandException
+from src.services.exceptions import NoBrandsException, NoBrandException, NoBrandCreatedException
 
 router = APIRouter(prefix="/brands", tags=["Brands"])
 
@@ -37,9 +37,12 @@ async def get_brand_by_name(brand_name: str) -> BrandSchema:
     return brand
 
 
-# @router.post("", status_code=status.HTTP_201_CREATED)
-# async def create_brand(name: str, description: str = None) -> BrandSchema:
-#     pass
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_brand(name: str, description: str = None) -> BrandSchema:
+    brand = await BrandsRepo.create_new_brand(name=name, description=description)
+    if not brand:
+        raise NoBrandCreatedException
+    return brand
 
 
 @router.patch("/{brand_id}", status_code=status.HTTP_200_OK)
