@@ -32,29 +32,6 @@ class BrandsRepo(BaseRepo):
             result = response.scalar_one_or_none()
             return result
 
-    # @classmethod
-    # async def update_by_id(cls, model_id: int, name: str, description: str) -> BrandSchema:
-    #     async with async_session_maker() as session:
-    #         stmt_upd = (
-    #             update(Brand)
-    #             .where(Brand.id == model_id)
-    #             .values(
-    #                 name=name,
-    #                 description=description
-    #             )
-    #         )
-    #         await session.execute(stmt_upd)
-    #         await session.commit()
-    #
-    #     stmt = (
-    #         select(Brand)
-    #         .where(Brand.id == model_id)
-    #     )
-    #
-    #     response = await session.execute(stmt)
-    #     result = response.scalar_one_or_none()
-    #     return result
-
     @classmethod
     async def create_new_brand(cls, name: str, description: str):
         async with async_session_maker() as session:
