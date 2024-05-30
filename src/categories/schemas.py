@@ -11,7 +11,6 @@ class CategorySchemaUpdate(CategorySchemaBase):
     name: str | None = None
     is_active: bool | None = None
     parent_id: int | None = None
-    descendants: list['CategorySchema'] | None = None
 
 
 class CategoriesWithChildrenSchema(CategorySchemaBase):

@@ -50,7 +50,8 @@ async def update_brand(
         brand_update: BrandSchemaUpdate,
         brand: BrandSchema = Depends(get_brand_by_id)
 ) -> BrandSchema:
-    result = await BrandsRepo.update_by_id(brand.id, **brand_update.dict())
+    update_data = brand_update.dict(exclude_unset=True)
+    result = await BrandsRepo.update_by_id(brand.id, **update_data)
     return result
 
 

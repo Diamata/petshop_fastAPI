@@ -1,7 +1,7 @@
 from sqlalchemy import select, func, update
 
 from src.categories.models import Category
-from src.categories.schemas import CategoriesWithChildrenSchema
+from src.categories.schemas import CategoriesWithChildrenSchema, CategorySchema
 from src.core.schemas.enum_pet_categories import PetsEnum
 from src.repository.crud import BaseRepo
 from src.repository.db_connection import async_session_maker
@@ -185,3 +185,5 @@ class CategoriesRepo(BaseRepo):
             else:
                 child.is_active = False
             await cls.switch_accessibility_of_children_recursively(session, child.id, activator)
+
+

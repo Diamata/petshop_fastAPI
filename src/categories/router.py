@@ -1,8 +1,7 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status
 
 from src.categories.crud import CategoriesRepo
-from src.categories.dependencies import get_category_by_id
-from src.categories.schemas import CategorySchema, CategoriesWithChildrenSchema
+from src.categories.schemas import CategorySchema, CategoriesWithChildrenSchema, CategorySchemaUpdate
 from src.core.schemas.enum_pet_categories import PetsEnum
 from src.services.exceptions import NoCategoriesException
 
@@ -74,6 +73,16 @@ async def switch_is_active_of_category_and_children(
     return switched_category
 
 
+@router.patch("/{category_id}", status_code=status.HTTP_200_OK)
+async def update_category(
+        category_update: CategorySchemaUpdate,
+        category_id: int
+) -> CategorySchema:
+    update_data = category_update.dict(exclude_unset=True)
+    result = await CategoriesRepo.update_by_id(category_id, **update_data)
+    return result
+
+
 # @router.post("", status_code=status.HTTP_201_CREATED)
 # async def create_category(
 #         is_active: bool = None,
@@ -81,17 +90,11 @@ async def switch_is_active_of_category_and_children(
 #         parent_id: int = None
 # ) -> CategorySchema:
 #     pass
-#
-#
-# @router.post("/{category_id}", status_code=status.HTTP_200_OK)
-# async def update_category(category_id: int) -> CategorySchema:
-#     pass
-
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_category(category: CategorySchema = Depends(get_category_by_id)) -> None:
+async def delete_category(category_id) -> None:
     """
     Cascade deletion of a category with its children
     """
-    result = await CategoriesRepo.delete_by_id(category.id)
+    result = await CategoriesRepo.delete_by_id(category_id)
     return result

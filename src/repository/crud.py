@@ -1,4 +1,6 @@
-from sqlalchemy import select, delete, insert
+from typing import Any
+
+from sqlalchemy import select, delete, insert, update
 
 from src.repository.db_connection import async_session_maker
 
@@ -44,3 +46,26 @@ class BaseRepo:
             await session.execute(query)
             await session.commit()
 
+    @classmethod
+    async def update_by_id(
+            cls,
+            model_id: int,
+            **kwargs: Any
+    ) -> model:
+        async with async_session_maker() as session:
+            stmt_upd = (
+                update(cls.model)
+                .where(cls.model.id == model_id)
+                .values(**kwargs)
+            )
+            await session.execute(stmt_upd)
+            await session.commit()
+
+        stmt = (
+            select(cls.model)
+            .where(cls.model.id == model_id)
+        )
+
+        response = await session.execute(stmt)
+        result = response.scalar_one_or_none()
+        return result
