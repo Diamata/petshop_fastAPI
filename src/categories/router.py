@@ -32,9 +32,9 @@ async def get_all_top_categories() -> list[CategorySchema]:
 
 
 @router.get("/{pet}")
-async def get_hierarchy_list_of_category(pet: PetsEnum) -> dict:
+async def get_hierarchy_list_of_category_by_pet(pet: PetsEnum) -> dict:
     """
-    Get one pet category with its hierarchy
+    Get one pet (top) category with its hierarchy
     """
     categories = await CategoriesRepo.find_category_hierarchy(pet)
     if not categories:
@@ -53,14 +53,27 @@ async def get_hierarchy_list_of_all_categories() -> list[dict[str, list[Categori
     return categories
 
 
-# @router.post("/{category_is_active}")
-# async def get_category_by_is_active(is_active: bool) -> list[CategorySchema | None]:
-#     category = await CategoriesRepo.find_all(is_active=is_active)
-#     if not category:
-#         raise NoCategoriesException
-#     return category
-#
-#
+@router.post("/{categories_is_active}")
+async def get_categories_by_is_active(is_active: bool) -> list[CategorySchema | None]:
+    category = await CategoriesRepo.find_all(is_active=is_active)
+    if not category:
+        raise NoCategoriesException
+    return category
+
+
+@router.patch("", status_code=status.HTTP_200_OK)
+async def switch_is_active_of_category_and_children(
+        category_id: int,
+        activator: bool
+) -> dict[str, list[CategoriesWithChildrenSchema]]:
+    """
+    Switches if the chosen category + all its children active or not
+    """
+    await CategoriesRepo.switch_accessibility_of_category_and_children(category_id, activator)
+    switched_category = await CategoriesRepo.find_category_hierarchy_by_id(category_id)
+    return switched_category
+
+
 # @router.post("", status_code=status.HTTP_201_CREATED)
 # async def create_category(
 #         is_active: bool = None,
@@ -75,8 +88,10 @@ async def get_hierarchy_list_of_all_categories() -> list[dict[str, list[Categori
 #     pass
 
 
-# TODO: удаление должно идти каскадом от родителя к последнему потомку
-# @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-# async def delete_category(category: CategorySchema = Depends(get_category_by_id)) -> None:
-#     result = await CategoriesRepo.delete_by_id(category.id)
-#     return result
+@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_category(category: CategorySchema = Depends(get_category_by_id)) -> None:
+    """
+    Cascade deletion of a category with its children
+    """
+    result = await CategoriesRepo.delete_by_id(category.id)
+    return result
