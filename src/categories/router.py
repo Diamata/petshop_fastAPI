@@ -3,7 +3,7 @@ from fastapi import APIRouter, status
 from src.categories.crud import CategoriesRepo
 from src.categories.schemas import CategorySchema, CategoriesWithChildrenSchema, CategorySchemaUpdate
 from src.core.schemas.enum_pet_categories import PetsEnum
-from src.services.exceptions import NoCategoriesException, NoCategoryException
+from src.services.exceptions import NoCategoriesException, NoCategoryException, NoCategoryCreatedException
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
@@ -14,6 +14,14 @@ async def get_all_categories() -> list[CategorySchema]:
     Get all existing categories
     """
     categories = await CategoriesRepo.find_all()
+    if not categories:
+        raise NoCategoriesException
+    return categories
+
+
+@router.get("/by_parent_id")
+async def get_child_categories_by_parent_id(parent_id: int) -> list[CategorySchema | None]:
+    categories = await CategoriesRepo.find_all(parent_id=parent_id)
     if not categories:
         raise NoCategoriesException
     return categories
@@ -80,6 +88,13 @@ async def update_category(
 ) -> CategorySchema:
     update_data = category_update.dict(exclude_unset=True)
     result = await CategoriesRepo.update_by_id(category_id, **update_data)
+
+    updated_category = await CategoriesRepo.find_by_id(category_id)
+
+    switch_children = await switch_is_active_of_category_and_children(
+        category_id=category_id,
+        activator=updated_category.is_active
+    )
     return result
 
 
@@ -96,7 +111,7 @@ async def create_category(
     )
     new_category = await CategoriesRepo.find_one_or_none(name=name)
     if not new_category:
-        raise NoCategoryException
+        raise NoCategoryCreatedException
     return new_category
 
 
