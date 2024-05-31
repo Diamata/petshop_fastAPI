@@ -38,7 +38,7 @@ class NoBrandCreatedException(PetshopException):
     detail = "Brand was not created"
 
 
-# ----------------------------------------- Brand exceptions:
+# ----------------------------------------- Categories exceptions:
 
 class NoCategoriesException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
@@ -53,3 +53,20 @@ class NoCategoryException(PetshopException):
 class NoCategoryCreatedException(PetshopException):
     status_code = status.HTTP_409_CONFLICT
     detail = "Category was not created"
+
+
+# ----------------------------------------- Images exceptions:
+
+class NoImagesException(PetshopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There are no images under such requirements"
+
+
+class NoImageException(PetshopException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "There is no such image"
+
+
+class NoImageCreatedException(PetshopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Image was not created"
