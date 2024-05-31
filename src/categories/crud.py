@@ -106,19 +106,6 @@ class CategoriesRepo(BaseRepo):
             return categories_list
 
     @classmethod
-    async def delete_by_id(cls, model_id: int):
-        """
-        Cascade deletion of a category with its children
-        """
-        async with async_session_maker() as session:
-            category = await cls.find_by_id(model_id)
-            if not category:
-                raise NoCategoryException
-
-            await session.delete(category)
-            await session.commit()
-
-    @classmethod
     async def switch_accessibility_of_category_and_children(
             cls,
             category_id: int,
@@ -186,4 +173,12 @@ class CategoriesRepo(BaseRepo):
                 child.is_active = False
             await cls.switch_accessibility_of_children_recursively(session, child.id, activator)
 
-
+    @classmethod
+    async def delete_by_id(cls, category_id: int):
+        async with async_session_maker() as session:
+            stmt = select(Category).filter_by(id=category_id)
+            response = await session.execute(stmt)
+            result = response.scalar_one_or_none()
+            if result:
+                await session.delete(result)
+                await session.commit()

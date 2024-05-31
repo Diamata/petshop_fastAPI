@@ -3,7 +3,7 @@ from fastapi import APIRouter, status
 from src.categories.crud import CategoriesRepo
 from src.categories.schemas import CategorySchema, CategoriesWithChildrenSchema, CategorySchemaUpdate
 from src.core.schemas.enum_pet_categories import PetsEnum
-from src.services.exceptions import NoCategoriesException
+from src.services.exceptions import NoCategoriesException, NoCategoryException
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
@@ -83,16 +83,25 @@ async def update_category(
     return result
 
 
-# @router.post("", status_code=status.HTTP_201_CREATED)
-# async def create_category(
-#         is_active: bool = None,
-#         name: str = None,
-#         parent_id: int = None
-# ) -> CategorySchema:
-#     pass
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_category(
+        is_active: bool = None,
+        name: str = None,
+        parent_id: int | None = None
+) -> CategorySchema:
+    await CategoriesRepo.create_new(
+        is_active=is_active,
+        name=name,
+        parent_id=parent_id
+    )
+    new_category = await CategoriesRepo.find_one_or_none(name=name)
+    if not new_category:
+        raise NoCategoryException
+    return new_category
+
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_category(category_id) -> None:
+async def delete_category(category_id: int) -> None:
     """
     Cascade deletion of a category with its children
     """
