@@ -16,7 +16,7 @@ async def get_all_brands() -> list[BrandSchema]:
     return brand
 
 
-@router.post("/id/{brand_id}", response_model=BrandSchema)
+@router.get("/id/{brand_id}", response_model=BrandSchema)
 async def get_brand_by_id(brand: BrandSchema = Depends(get_brand_by_id)) -> BrandSchema:
     return brand
 

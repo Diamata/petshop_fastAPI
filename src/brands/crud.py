@@ -42,5 +42,4 @@ class BrandsRepo(BaseRepo):
             )
             response = await session.execute(stmt)
             result = response.scalar_one_or_none()
-            await session.commit()
             return result
