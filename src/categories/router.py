@@ -86,6 +86,9 @@ async def update_category(
         category_update: CategorySchemaUpdate,
         category_id: int
 ) -> CategorySchema:
+    """
+    Updates Category's data
+    """
     update_data = category_update.dict(exclude_unset=True)
     result = await CategoriesRepo.update_by_id(category_id, **update_data)
 
