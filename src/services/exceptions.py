@@ -21,6 +21,11 @@ class NoProductExistsException(PetshopException):
     detail = "There is no such product"
 
 
+class NoProductCreatedException(PetshopException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Product was not created"
+
+
 # ----------------------------------------- Brand exceptions:
 
 class NoBrandsException(PetshopException):
