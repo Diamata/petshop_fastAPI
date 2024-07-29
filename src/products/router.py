@@ -1,13 +1,13 @@
 from fastapi import APIRouter, status
 
 from src.products.crud import ProductsRepo
-from src.products.schemas import ProductSchema
-from src.services.exceptions import NoProductsExistException, NoProductExistsException
+from src.products.schemas import ProductSchema, ProductSchemaUpdate
+from src.services.exceptions import NoProductsExistException, NoProductExistsException, NoProductCreatedException
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
-@router.get("")
+@router.get("", status_code=status.HTTP_200_OK)
 async def get_all_products() -> list[ProductSchema]:
     products = await ProductsRepo.find_all()
     if not products:
@@ -15,7 +15,7 @@ async def get_all_products() -> list[ProductSchema]:
     return products
 
 
-@router.post("/{product_id}")
+@router.get("/{product_id}", status_code=status.HTTP_200_OK)
 async def get_product_by_id(product_id: int) -> ProductSchema:
     product = await ProductsRepo.find_by_id(product_id)
     if not product:
@@ -23,7 +23,7 @@ async def get_product_by_id(product_id: int) -> ProductSchema:
     return product
 
 
-# @router.post("/{product_name}")
+# @router.get("/{product_name}")
 # async def get_product_by_name(product_name: str) -> ProductSchema | None:
 #     pass
 #     # Сделать список продуктов, в которых встречаются такие сочетания
@@ -44,36 +44,64 @@ async def get_product_by_id(product_id: int) -> ProductSchema:
 #     if not is_active:
 #         pass
 #     pass
-#
-#
-# @router.post("", status_code=status.HTTP_201_CREATED)
-# async def create_product(
-#         is_active: bool,
-#         brand_id: int,
-#         name: str,
-#         price: int,
-#         discount_ratio: int,
-#         description: str = None,
-#         category: str = None,
-#         image_id: int = None,
-#         age: str = None,
-#         main_ingredient: str = None,
-#         special_prescription: str = None,
-#         country_of_origin: str = None,
-#         packed_in: str = None,
-#         qty_in_package: int = None,
-#         weight: str = None,
-#         length: str = None,
-#         width: str = None,
-#         height: str = None
-# ) -> ProductSchema:
-#     pass
-#
-#
-# # TODO: put & patch with dependency from what is required:
-# @router.post("/{product_id}", status_code=status.HTTP_200_OK)
-# async def update_product(product_id: int) -> ProductSchema:
-#     pass
+
+
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_product(
+        is_active: bool,
+        name: str,
+        price: int,
+        discount_ratio: int = 1,
+        brand_id: int = None,
+        description: str = None,
+        category_id: int = None,
+        image_id: int = None,
+        age: str = None,
+        main_ingredient: str = None,
+        special_prescription: str = None,
+        country_of_origin: str = None,
+        packed_in: str = None,
+        qty_in_package: int = None,
+        weight: str = None,
+        length: str = None,
+        width: str = None,
+        height: str = None
+) -> ProductSchema:
+    await ProductsRepo.create_new(
+        is_active=is_active,
+        brand_id=brand_id,
+        name=name,
+        price=price,
+        discount_ratio=discount_ratio,
+        description=description,
+        category_id=category_id,
+        image_id=image_id,
+        age=age,
+        main_ingredient=main_ingredient,
+        special_prescription=special_prescription,
+        country_of_origin=country_of_origin,
+        packed_in=packed_in,
+        qty_in_package=qty_in_package,
+        weight=weight,
+        length=length,
+        width=width,
+        height=height
+    )
+    new_category = await ProductsRepo.find_one_or_none(name=name, brand_id=brand_id)
+    if not new_category:
+        raise NoProductCreatedException
+    return new_category
+
+
+@router.patch("/{product_id}", status_code=status.HTTP_200_OK)
+async def update_product(
+        product_update: ProductSchemaUpdate,
+        product_id: int
+) -> ProductSchema:
+    update_data = product_update.dict(exclude_unset=True)
+    result = await ProductsRepo.update_by_id(product_id, **update_data)
+    updated_category = await ProductsRepo.find_by_id(product_id)
+    return result
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -83,5 +111,3 @@ async def delete_product(product_id: int) -> None:
         raise NoProductExistsException
     result = await ProductsRepo.delete_by_id(product_id)
     return result
-
-# TODO: логика для фильтрации

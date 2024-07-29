@@ -31,6 +31,6 @@ class Product(Base):
 
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
     image_id: Mapped[int | None] = mapped_column(ForeignKey("images.id"))
-    brand_id: Mapped[id] = mapped_column(ForeignKey("brands.id"))
+    brand_id: Mapped[int | None] = mapped_column(ForeignKey("brands.id"))
 
     brand: Mapped["Brand"] = relationship(back_populates="product")

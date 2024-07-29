@@ -1,10 +1,7 @@
-from pydantic import BaseModel
-
-from src.brands.schemas import BrandSchema
+from pydantic import BaseModel, ConfigDict
 
 
-class ProductSchema(BaseModel):
-    id: int
+class ProductSchemaBase(BaseModel):
     name: str
     price: int
     discount_ratio: int
@@ -24,8 +21,32 @@ class ProductSchema(BaseModel):
 
     category_id: int
     image_id: int | None
-    brand_id: int
-    brand: BrandSchema | None
+    brand_id: int | None
 
-    class Config:
-        from_attributes = True
+
+class ProductSchemaUpdate(ProductSchemaBase):
+    name: str | None = None
+    price: int | None = None
+    discount_ratio: int | None = None
+    description: str | None = None
+    is_active: bool | None = None
+
+    age: str | None = None
+    main_ingredient: str | None = None
+    special_prescription: str | None = None
+    country_of_origin: str | None = None
+    packed_in: str | None = None
+    qty_in_package: str | None = None
+    weight: str | None = None
+    length: str | None = None
+    width: str | None = None
+    height: str | None = None
+
+    category_id: int | None = None
+    image_id: int | None = None
+    brand_id: int | None = None
+
+
+class ProductSchema(ProductSchemaBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
