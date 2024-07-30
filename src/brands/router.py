@@ -23,15 +23,7 @@ async def get_brand_by_id(brand: BrandSchema = Depends(get_brand_by_id)) -> Bran
 
 @router.get("/search/{brand_name_part}", status_code=status.HTTP_200_OK)
 async def get_brands_by_partial_name(brand_name_part: str) -> list[BrandSchema]:
-    brand = await BrandsRepo.find_all_by_partial_name(name=brand_name_part)
-    if not brand:
-        raise NoBrandException
-    return brand
-
-
-@router.get("/search/{brand_name}", status_code=status.HTTP_200_OK)
-async def get_brand_by_name(brand_name: str) -> BrandSchema:
-    brand = await BrandsRepo.find_one_or_none_by_name(name=brand_name)
+    brand = await BrandsRepo.find_by_partial_name(name=brand_name_part)
     if not brand:
         raise NoBrandException
     return brand

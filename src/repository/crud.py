@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import select, delete, insert, update
+from sqlalchemy import select, delete, insert, update, func
 
 from src.repository.db_connection import async_session_maker
 
@@ -30,6 +30,17 @@ class BaseRepo:
             stmt = select(cls.model).filter_by(**filter_by)
             response = await session.execute(stmt)
             result = response.scalar_one_or_none()
+            return result
+
+    @classmethod
+    async def find_by_partial_name(cls, name: str):
+        async with async_session_maker() as session:
+            stmt = (
+                select(cls.model)
+                .where(func.lower(cls.model.name).contains(func.lower(name)))
+            )
+            response = await session.execute(stmt)
+            result = response.scalars().all()
             return result
 
     @classmethod
