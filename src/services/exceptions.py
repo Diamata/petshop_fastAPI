@@ -11,12 +11,12 @@ class PetshopException(HTTPException):
 
 # ----------------------------------------- Product exceptions:
 
-class NoProductsExistException(PetshopException):
+class NoProductsException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There are no products under such requirements"
 
 
-class NoProductExistsException(PetshopException):
+class NoProductException(PetshopException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "There is no such product"
 
