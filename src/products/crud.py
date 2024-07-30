@@ -54,3 +54,14 @@ class ProductsRepo(BaseRepo):
 
             return product_with_brand
 
+    @classmethod
+    async def find_all_by_brand(cls, brand_id: int):
+        async with async_session_maker() as session:
+            stmt = (
+                select(Product)
+                .where(Product.brand_id == brand_id)
+            )
+
+            response = await session.execute(stmt)
+            result = response.scalars().all()
+            return result

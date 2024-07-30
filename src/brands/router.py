@@ -3,7 +3,9 @@ from fastapi import APIRouter, status, Depends
 from src.brands.crud import BrandsRepo
 from src.brands.dependencies import get_brand_by_id
 from src.brands.schemas import BrandSchema, BrandSchemaUpdate
-from src.services.exceptions import NoBrandsException, NoBrandException, NoBrandCreatedException
+from src.products.crud import ProductsRepo
+from src.products.schemas import ProductSchema
+from src.services.exceptions import NoBrandsException, NoBrandException, NoBrandCreatedException, NoProductsException
 
 router = APIRouter(prefix="/brands", tags=["Brands"])
 
@@ -23,10 +25,22 @@ async def get_brand_by_id(brand: BrandSchema = Depends(get_brand_by_id)) -> Bran
 
 @router.get("/search/{brand_name_part}", status_code=status.HTTP_200_OK)
 async def get_brands_by_partial_name(brand_name_part: str) -> list[BrandSchema]:
-    brand = await BrandsRepo.find_by_partial_name(name=brand_name_part)
-    if not brand:
+    brands = await BrandsRepo.find_by_partial_name(name=brand_name_part)
+    if not brands:
         raise NoBrandException
-    return brand
+    return brands
+
+
+@router.get("/{brand_name}/products", status_code=status.HTTP_200_OK)
+async def get_brand_products_by_name(brand_name: str) -> list[ProductSchema]:
+    single_brand = await BrandsRepo.find_by_partial_name(name=brand_name)
+    if not single_brand:
+        raise NoBrandException
+    brand_products = await ProductsRepo.find_all_by_brand(brand_id=single_brand[0].id)
+
+    if not brand_products:
+        raise NoProductsException
+    return brand_products
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

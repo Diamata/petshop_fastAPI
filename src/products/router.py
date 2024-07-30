@@ -25,17 +25,12 @@ async def get_product_by_id(product_id: int) -> ProductSchema:
 
 @router.get("/search/{product_name_part}", status_code=status.HTTP_200_OK)
 async def get_brands_by_partial_name(product_name_part: str) -> list[ProductSchema]:
-    brand = await ProductsRepo.find_by_partial_name(name=product_name_part)
-    if not brand:
+    product = await ProductsRepo.find_by_partial_name(name=product_name_part)
+    if not product:
         raise NoProductException
-    return brand
+    return product
 
 
-# @router.get("/{brand}")
-# async def get_products_by_brand(brand: str) -> list[ProductSchema]:
-#     pass
-#
-#
 # @router.get("/{category}")
 # async def get_products_by_category(category: str) -> list[ProductSchema]:
 #     pass
