@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
+from src.brands.schemas import BrandSchema
+
 
 class ProductSchemaBase(BaseModel):
     name: str
@@ -23,6 +25,8 @@ class ProductSchemaBase(BaseModel):
     image_id: int | None
     brand_id: int | None
 
+    brand: str | None
+
 
 class ProductSchemaUpdate(ProductSchemaBase):
     name: str | None = None
@@ -45,6 +49,8 @@ class ProductSchemaUpdate(ProductSchemaBase):
     category_id: int | None = None
     image_id: int | None = None
     brand_id: int | None = None
+
+    brand: str | None = None
 
 
 class ProductSchema(ProductSchemaBase):
