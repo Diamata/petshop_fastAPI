@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 
 from src.products.crud import ProductsRepo
 from src.products.schemas import ProductSchema, ProductSchemaUpdate
-from src.services.exceptions import NoProductsExistException, NoProductExistsException, NoProductCreatedException
+from src.services.exceptions import NoProductsException, NoProductException, NoProductCreatedException
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 async def get_all_products() -> list[ProductSchema]:
     products = await ProductsRepo.find_all()
     if not products:
-        raise NoProductsExistException
+        raise NoProductsException
     return products
 
 
@@ -19,30 +19,34 @@ async def get_all_products() -> list[ProductSchema]:
 async def get_product_by_id(product_id: int) -> ProductSchema:
     product = await ProductsRepo.find_by_id(product_id)
     if not product:
-        raise NoProductExistsException
+        raise NoProductException
     return product
 
 
-# @router.get("/{product_name}")
-# async def get_product_by_name(product_name: str) -> ProductSchema | None:
-#     pass
-#     # Сделать список продуктов, в которых встречаются такие сочетания
-#
-#
-# @router.post("/{brand}")
+@router.get("/search/{product_name_part}", status_code=status.HTTP_200_OK)
+async def get_brands_by_partial_name(product_name_part: str) -> list[ProductSchema]:
+    brand = await ProductsRepo.find_by_partial_name(name=product_name_part)
+    if not brand:
+        raise NoProductException
+    return brand
+
+
+# @router.get("/{brand}")
 # async def get_products_by_brand(brand: str) -> list[ProductSchema]:
 #     pass
 #
 #
-# @router.post("/{category}")
+# @router.get("/{category}")
 # async def get_products_by_category(category: str) -> list[ProductSchema]:
+#     pass
+
+# @router.get("/{top_category}")
+# async def get_products_by_top_category(top_category: str) -> list[ProductSchema]:
 #     pass
 #
 #
 # @router.post("/{product_is_active}")
 # async def get_product_by_is_active(is_active: bool) -> list[ProductSchema | None]:
-#     if not is_active:
-#         pass
 #     pass
 
 
@@ -108,6 +112,6 @@ async def update_product(
 async def delete_product(product_id: int) -> None:
     product = await ProductsRepo.find_by_id(product_id)
     if not product:
-        raise NoProductExistsException
+        raise NoProductException
     result = await ProductsRepo.delete_by_id(product_id)
     return result
